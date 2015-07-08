@@ -2,12 +2,48 @@
 <html>
 	<head>
 		<title>ChartJS - Pie Chart</title>
+		<link href="css/bootstrap.min.css" rel="stylesheet">
 		<script src="jquery-2.1.4.min.js"></script>
 		<script src="Chart.js"></script>
-		<script src="graph.js"></script>
+		<script src="graph.js"> </script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
 	</head>
 	<body>
-		<canvas id="mycanvas" width="256" height="256">
+		<div>
+
+			<!-- Nav tabs -->
+			<ul class="nav nav-tabs" role="tablist">
+				<li role="presentation" class="active">
+					<a href="#daily" aria-controls="daily" role="tab" data-toggle="tab">Daily</a>
+				</li>
+				<li role="presentation">
+					<a href="#weekly" aria-controls="weekly" role="tab" data-toggle="tab">Weekly</a>
+				</li>
+				<li role="presentation">
+					<a href="#yearly" aria-controls="yearly" role="tab" data-toggle="tab">Yearly</a>
+				</li>
+				<li role="presentation">
+					<a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a>
+				</li>
+			</ul>
+
+			<!-- Tab panes -->
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane active" id="daily">
+					<canvas id="mycanvas" width="256" height="256">
+					</canvas>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="weekly">
+					<canvas id="line" width="256" height="256">
+					</canvas>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="yearly">yearly</div>
+				<div role="tabpanel" class="tab-pane" id="settings">settings</div>
+			</div>
+
+		</div>
+
 
 	</body>
 </html>
