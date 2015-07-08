@@ -1,20 +1,21 @@
-function GO()
+function UpdateUI(text)
 {
-	setInterval(function(){myTimer()}, 100);
-	function myTimer(){
-		Update();
-	}	
+	var x = document.getElementById("status");
+	x.innerHTML = text;
 }
-
-function Update()
-{
- var x = document.getElementById("status");
-	x.innerHTML = chrome.extension.getBackgroundPage().actual_time;
-}
-
 
 document.addEventListener('DOMContentLoaded', function () {  
-document.getElementById("Invoke-Button").addEventListener("click",GO);
-document.getElementById("status").innerHTML = chrome.extension.getBackgroundPage().actual_time;
-}
-);
+
+	chrome.storage.onChanged.addListener(function(changes, namespace){
+		for(key in changes)
+		{	
+			var storageChange = changes[key];
+			if(key == "actual_time")
+			{
+				UpdateUI(storageChange.newValue);
+			}
+		}
+		console.log("changed");
+	});
+
+});
