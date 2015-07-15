@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+  "name": "App",
+  "short_name": "App",
+  "description": "",
+  "version": "0.0.1",
+  "minimum_chrome_version": "38",
+
+  "icons": {
+    "16": "assets/icon_16.png",
+    "128": "assets/icon_128.png"
+  },
+
+  "app": {
+    "background": {
+      "scripts": ["notify.js", "fileManagment.js", "background.js", "messaging.js"],
+      "persistent": true
+    }
+  },
+  "permissions":[
+    "syncFileSystem",
+    "notifications",
+    "background"
+    ]
+}
