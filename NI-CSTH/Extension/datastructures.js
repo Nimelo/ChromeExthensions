@@ -178,14 +178,33 @@ function List(){
 		var ar = [];
 		this.items.forEach(function(it){
 				var obj = {};
-				obj["url"] = it.url;
+				obj["url"] = it.domain();
 				obj["diff"] = it.allDiffs();
+				obj.compare = function(toCompare){
+				  if(this["url"] == toCompare["url"])
+				    return true;
+				  return false;
+				};
 				ar.push(obj);
 				
 				console.log(it.url + " " + it.allDiffs());				
 			}
 		);
-		return ar;
+	//	return ar;
+		
+		var arr = new List();
+		
+		arr.add(ar[0]);
+		for(i = 1; i < ar.length; i++){
+		  if(arr.exist(ar[i])){
+		    arr.get(ar[i])["diff"] += ar[i]["diff"];
+		  }
+		  else{
+		    arr.add(ar[i]);
+		  }
+		}
+		return arr.items;
+		
 	};
 	
 	/**/

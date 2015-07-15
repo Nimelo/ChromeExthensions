@@ -43,7 +43,7 @@ FileManagment.writeData = function (data){
         console.log(e);
         
       };
-      
+      writer.seek(writer.length);
       var blob = new Blob([data], {type: 'text/plain'});
       writer.write(blob);
       
