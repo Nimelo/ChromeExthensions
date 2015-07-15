@@ -25,20 +25,20 @@ function OnCreated(tab){
 function OnUpdated(tabId, changeInfo, tab)
 {
 	console.log("OnUpdated");
-	if(lastActivatedTabId != -1)
+	if(Core.lastActivatedTabId != -1)
 		{
-			var newTab = new NTab(lastActivatedTabUrl);
-			historyOfTabs.get(newTab).actions.last().end = new Date();		
+			var newTab = new NTab(Core.lastActivatedTabUrl);
+			Core.historyOfTabs.get(newTab).actions.last().end = new Date();		
 		}
 		
-		lastActivatedTabId = tabId;
-		lastActivatedTabUrl = tab.url;
+		Core.lastActivatedTabId = tabId;
+		Core.lastActivatedTabUrl = tab.url;
 		
 		var newTab = new NTab(tab.url);
-		historyOfTabs.addDistinct(newTab);
-		historyOfTabs.get(newTab).actions.add(new Timespan(new Date()));
+		Core.historyOfTabs.addDistinct(newTab);
+		Core.historyOfTabs.get(newTab).actions.add(new Timespan(new Date()));
 
-    Messaging.sendMessage("Write", historyOfTabs.toString());
+    Messaging.sendMessage("Write", Core.historyOfTabs.toString());
 
 }
 
@@ -48,26 +48,26 @@ function OnActivated(info)
 	console.log("OnActivated");
 	
 	
-	if(lastActivatedTabId != -1)
+	if(Core.lastActivatedTabId != -1)
 	{
-		var newTab = new NTab(lastActivatedTabUrl);
-		historyOfTabs.get(newTab).actions.last().end = new Date();		
+		var newTab = new NTab(Core.lastActivatedTabUrl);
+		Core.historyOfTabs.get(newTab).actions.last().end = new Date();		
 	}
 	
-	lastActivatedTabId = info.tabId;
+	Core.lastActivatedTabId = info.tabId;
 	
 	chrome.tabs.get(info.tabId,  function(tab){
 	
-			lastActivatedTabUrl = tab.url;
+			Core.lastActivatedTabUrl = tab.url;
 			var newTab = new NTab(tab.url);
-			historyOfTabs.addDistinct(newTab);
-			historyOfTabs.get(newTab).actions.add(new Timespan(new Date()));
+			Core.historyOfTabs.addDistinct(newTab);
+			Core.historyOfTabs.get(newTab).actions.add(new Timespan(new Date()));
 			
 			//console.log(tab.url);
 		}
 	)
 	
-	Messaging.sendMessage("Write", historyOfTabs.toString());
+	Messaging.sendMessage("Write", Core.historyOfTabs.toString());
 }
 
 /**/
@@ -75,22 +75,25 @@ function OnRemoved(tabId, removeInfo)
 {
 	console.log("OnRemoved");
 	
-	if(tabId == lastActivatedTabId)
+	if(tabId == Core.lastActivatedTabId)
 	{
-		var newTab = new NTab(lastActivatedTabUrl);
-		historyOfTabs.get(newTab).actions.last().end = new Date();		
+		var newTab = new NTab(Core.lastActivatedTabUrl);
+		Core.historyOfTabs.get(newTab).actions.last().end = new Date();		
 		
-		lastActivatedTabId = -1;
-		lastActivatedTabUrl = "";		
+		Core.lastActivatedTabId = -1;
+		Core.lastActivatedTabUrl = "";		
 	}
 	
-	Messaging.sendMessage("Write", historyOfTabs.toString());
+	Messaging.sendMessage("Write", Core.historyOfTabs.toString());
 }
 
 /*Core*/
-var historyOfTabs = new List();
-var lastActivatedTabId = -1;
-var lastActivatedTabUrl = "";
+function Core(){
+}
+
+Core.historyOfTabs = new List();
+Core.lastActivatedTabId = -1;
+Core.lastActivatedTabUrl = "";
 
 /**/
 function Read()
@@ -100,7 +103,7 @@ function Read()
 	
 	storage.get("all", function(result)
 	{
-		historyOfTabs = result["all"];
+		Core.historyOfTabs = result["all"];
 	});
 }
 
@@ -109,7 +112,7 @@ function Write()
 {
 	var storage = chrome.storage.sync;
 	var obj = {};
-	obj["all"] = historyOfTabs;
-	storage.set({'all': historyOfTabs});
+	obj["all"] = Core.historyOfTabs;
+	storage.set({'all': Core.historyOfTabs});
 }
 

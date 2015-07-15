@@ -10,7 +10,7 @@
   },
   
   "background":{
-	"scripts":  ["assets/jquery-2.1.4.min.js","datastructures.js","messaging.js", "background.js"],
+	"scripts":  ["assets/jquery-2.1.4.min.js","datastructures.js","messaging.js", "background.js", "idle.js"],
 	"persistent": true
   },
   "permissions": [
