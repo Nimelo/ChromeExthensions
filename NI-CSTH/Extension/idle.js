@@ -32,7 +32,7 @@ function OnFocusChanged(windowId){
 	if(windowId == chrome.windows.WINDOW_ID_NONE)
 	{
 		console.log("WINDOW_ID_NONE!");
-
+    CheckWindowsFocus();
   	//Core.prepareMessage();
     //Core.clear();
 		
@@ -122,7 +122,7 @@ function CheckWindowsFocus(){
 
 /**/
 function Intervals(){
-  setInterval(CheckWindowsFocus, 10000);
+  setInterval(CheckWindowsFocus, 1000);
 }
 
 Intervals();

@@ -1,24 +1,34 @@
 
 $(function () {
     
+        Highcharts.getOptions().colors = Highcharts.map(Highcharts.getOptions().colors, function (color) {
+        return {
+            radialGradient: {
+                cx: 0.5,
+                cy: 0.3,
+                r: 0.7
+            },
+            stops: [
+                [0, color],
+                [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
+            ]
+        };
+    });
+    
     $(document).ready(function () {
         
-        Messaging.sendMessageWaitRespond("Read", "", function(response){
+        Messaging.sendMessageWaitRespond("Read", "Today", function(response){
           var text = response;
-          console.log(text);
-          var history = new List();
-          history.fromString(text);
-          console.log(history);
+          //console.log(text);
+          var history = HistoryEntry.fromString(text);
+
           var data = [];
           
-          var diffs = history.getDiffs();
-          
-          diffs.forEach(function(el){
-            data.push({name: el["url"],
-                      y: el["diff"]
-            });
+          history.items.forEach(function(el){
+            data.push({name: el.domain,
+                      y: Number(el.counter)}
+            );
           });
-          
           console.log(data);
           // Build the chart
           $('#container').highcharts({
@@ -39,13 +49,14 @@ $(function () {
                       allowPointSelect: true,
                       cursor: 'pointer',
                       dataLabels: {
-                          enabled: false
+                          enabled: false,
+                          format: '<b>{point.name}</b>: {point.percentage:.1f} %'
                       },
                       showInLegend: true
                   }
               },
               series: [{
-                  name: "Websides",
+                  name: "Today's domains",
                   colorByPoint: true,
                   data: data
               }]

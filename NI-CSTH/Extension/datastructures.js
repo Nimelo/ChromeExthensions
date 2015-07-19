@@ -1,27 +1,35 @@
 
-/*Informtion about Tab*/
-
-function NTab(url){
+/**/
+function HistoryEntry(url){
 
 	/**/
 	this.url = url;
 	
+	/**/
+	this.domain = HistoryEntry.getDomain(url);
 	/**/
 	this.counter = 0;
 	
 	/**/
 	this.actions = new List();
 	
-	/**/
-	this.domain = function(){
+		
+	/**/	
+	this.compare = function(toCompare){	
+		return this.domain == toCompare.domain;
+	};
+	
+}
+
+HistoryEntry.getDomain = function(url){
 		var domain;
 		
 		//find & remove protocol (http, ftp, etc.) and get domain
-		if (this.url.indexOf("://") > -1) {
-			domain = this.url.split('/')[2];
+		if (url.indexOf("://") > -1) {
+			domain = url.split('/')[2];
 		}
 		else {
-			domain = this.url.split('/')[0];
+			domain = url.split('/')[0];
 		}
 
 		//find & remove port number
@@ -29,70 +37,23 @@ function NTab(url){
 
 		return domain;
 	};
-		
-	/**/	
-	this.compare = function(toCompare){	
-		return this.url == toCompare.url ? true : false;
-	};
 	
-	/**/
-	this.printActions = function(){
-			console.log(this.url);
-		this.actions.items.forEach(function(element, index, array){
-				element.print();
-			}
-		);
-	};
-	
-	/**/
-	this.allDiffs = function(){
-		var sum = 0;
-		this.actions.items.forEach(function(element, index, array){
-				sum += element.diff();
-			}
-		);
-		return sum;
-	};
-	
-	/**/
-	this.toString = function(){
-	  var str = this.url + "\n";
-	  str += this.counter + "\n";
-	  return str;
-	};
+HistoryEntry.fromString = function(str){
+  var list = new List();
+  var splittedStr = str.split('\n');
+  var index = 0;
+  
+  while(index < splittedStr.length - 1
+        && splittedStr[index] != '\n'){
+          var histEntry = new HistoryEntry(splittedStr[index])
+          list.addDistinct(histEntry);
+          list.get(histEntry).counter += Number(splittedStr[index + 1]);
+          index += 2;
+        }
+  return list;
 }
 
-/*Timespan*/
-function Timespan(begin){
-
-	/**/
-	this.begin = begin;
-	
-	/**/
-	this.end = begin;
-	
-	/**/
-	this.print = function(){
-		console.log("***");
-		console.log(this.begin);
-		console.log(this.end);
-	};
-	
-	/**/
-	this.diff = function(){
-		return Math.floor((this.end - this.begin) / 1000);
-	};
-	
-	/**/
-	this.toString = function(){
-	  return this.begin.toJSON() + "," + this.end.toJSON();
-	};
-}
-
-
-
-/*NList*/
-
+/*List*/
 function List(){
 
 	/**/
@@ -184,8 +145,8 @@ function Core(windowId){
     	text += timespan;
     	//console.log(text);
     	//console.log(timespan);
-    	Extension.history.addDistinct(new NTab(this.lastTabUrl));
-    	Extension.history.get(new NTab(this.lastTabUrl)).counter += timespan;
+      //Extension.history.addDistinct(new HistoryEntry(this.lastTabUrl));
+    	//Extension.history.get(new HistoryEntry(this.lastTabUrl)).counter += timespan;
     	if(timespan != 0)
     	  callback(text);
     }
