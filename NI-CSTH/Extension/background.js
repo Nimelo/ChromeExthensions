@@ -25,20 +25,17 @@ function OnCreated(tab){
 function OnUpdated(tabId, changeInfo, tab)
 {
 	console.log("OnUpdated");
-	if(Core.lastActivatedTabId != -1)
-		{
-			var newTab = new NTab(Core.lastActivatedTabUrl);
-			Core.historyOfTabs.get(newTab).actions.last().end = new Date();		
-		}
-		
-		Core.lastActivatedTabId = tabId;
-		Core.lastActivatedTabUrl = tab.url;
-		
-		var newTab = new NTab(tab.url);
-		Core.historyOfTabs.addDistinct(newTab);
-		Core.historyOfTabs.get(newTab).actions.add(new Timespan(new Date()));
-
-    Messaging.sendMessage("Write", Core.historyOfTabs.toString());
+	
+  chrome.tabs.get(tabId, function(tab){
+        var windowHistory = Extension.windows.get(tab.windowId);
+        windowHistory.prepareMessage();
+        windowHistory.clear();
+        windowHistory.lastTabId = tab.id;
+        windowHistory.lastTabUrl = tab.url;
+        windowHistory.lastBegin = new Date();
+      }
+  );
+   // Messaging.sendMessage("Write", Core.historyOfTabs.toString());
 
 }
 
@@ -48,26 +45,17 @@ function OnActivated(info)
 	console.log("OnActivated");
 	
 	
-	if(Core.lastActivatedTabId != -1)
-	{
-		var newTab = new NTab(Core.lastActivatedTabUrl);
-		Core.historyOfTabs.get(newTab).actions.last().end = new Date();		
-	}
+  chrome.tabs.get(info.tabId, function(tab){
+        var windowHistory = Extension.windows.get(tab.windowId);
+        windowHistory.prepareMessage();
+        windowHistory.clear();
+        windowHistory.lastTabId = tab.id;
+        windowHistory.lastTabUrl = tab.url;
+        windowHistory.lastBegin = new Date();
+      }
+  );
 	
-	Core.lastActivatedTabId = info.tabId;
-	
-	chrome.tabs.get(info.tabId,  function(tab){
-	
-			Core.lastActivatedTabUrl = tab.url;
-			var newTab = new NTab(tab.url);
-			Core.historyOfTabs.addDistinct(newTab);
-			Core.historyOfTabs.get(newTab).actions.add(new Timespan(new Date()));
-			
-			//console.log(tab.url);
-		}
-	)
-	
-	Messaging.sendMessage("Write", Core.historyOfTabs.toString());
+	//Messaging.sendMessage("Write", Core.historyOfTabs.toString());
 }
 
 /**/
@@ -75,44 +63,12 @@ function OnRemoved(tabId, removeInfo)
 {
 	console.log("OnRemoved");
 	
-	if(tabId == Core.lastActivatedTabId)
-	{
-		var newTab = new NTab(Core.lastActivatedTabUrl);
-		Core.historyOfTabs.get(newTab).actions.last().end = new Date();		
-		
-		Core.lastActivatedTabId = -1;
-		Core.lastActivatedTabUrl = "";		
-	}
+  var windowHistory = Extension.windows.get(removeInfo.windowId);
+  windowHistory.prepareMessage();
+  windowHistory.clear();
+
 	
-	Messaging.sendMessage("Write", Core.historyOfTabs.toString());
+	//Messaging.sendMessage("Write", Core.historyOfTabs.toString());
 }
 
-/*Core*/
-function Core(){
-}
-
-Core.historyOfTabs = new List();
-Core.lastActivatedTabId = -1;
-Core.lastActivatedTabUrl = "";
-
-/**/
-function Read()
-{
-	var storage = chrome.storage.sync;
-	var obj = {};
-	
-	storage.get("all", function(result)
-	{
-		Core.historyOfTabs = result["all"];
-	});
-}
-
-/**/
-function Write()
-{
-	var storage = chrome.storage.sync;
-	var obj = {};
-	obj["all"] = Core.historyOfTabs;
-	storage.set({'all': Core.historyOfTabs});
-}
 

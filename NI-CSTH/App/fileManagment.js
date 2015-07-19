@@ -26,7 +26,7 @@ FileManagment.writeData = function (data){
         
       };
      
-      writer.truncate(0);
+      //writer.truncate(0);
       
     });
     
@@ -49,7 +49,26 @@ FileManagment.writeData = function (data){
       
     });
 };
-    
+
+FileManagment.truncateData = function(){
+   
+    FileManagment.file.createWriter(function(writer){
+      
+      writer.onwriteend = function(e){
+        
+        console.log("Truncate completed!");
+        
+      };
+      
+      writer.onerror = function(e){
+       
+        console.log(e);
+        
+      };
+     
+      writer.truncate(0);
+    });
+}  
 /**/
 FileManagment.readData = function (callMeAfter){
     

@@ -1,3 +1,12 @@
+/*On start up*/
+
+function Extension(){
+  
+}
+
+Extension.windows = new List();
+
+Extension.history = new List();
 /*Occurs when focus of any window is changing*/
 chrome.windows.onFocusChanged.addListener(OnFocusChanged);
 
@@ -6,6 +15,7 @@ chrome.windows.onCreated.addListener(OnCreated);
 
 /*Occurs when any window is closing*/
 chrome.windows.onRemoved.addListener(OnRemoved);
+
 
 
 /*ReadMe */
@@ -23,8 +33,9 @@ function OnFocusChanged(windowId){
 	{
 		console.log("WINDOW_ID_NONE!");
 
-		/*TODO*/
-		//active tab from last active window should be closed
+  	//Core.prepareMessage();
+    //Core.clear();
+		
 	}
 	else if(windowId == chrome.windows.WINDOW_ID_CURRENT)
 	{
@@ -32,55 +43,49 @@ function OnFocusChanged(windowId){
 	}
 	else
 	{
-	  	console.log("ELSE!");
-	/*  	if(Core.lastActivatedTabId != -1)
-		  {
-  			var newTab = new NTab(Core.lastActivatedTabUrl);
-  			Core.historyOfTabs.addDistinct(newTab);
-  			Core.historyOfTabs.get(newTab).actions.last().end = new Date();		
-		  }
-		
-		Core.lastActivatedTabId = -1;
-		Core.lastActivatedTabUrl = "";
-	*/
-		
-		//chrome.tabs.query({active:true, windowId:windowId}, function(tabs){tabs.forEach(function(el){console.log(el.url + " " + el.id)})})
-		
-		chrome.windows.getAll({}, function(windows){
-		  windows.forEach(function(window){
-		    
-		    if(window.focused){
-		      var tab;
-		      chrome.tabs.query({active:true, windowId:windowId}, function(tabs){
-		        tabs.forEach(function(el){
-		          return el;
-		          
-		        });
-		      });
-		      
-		      if(typeof(tab) != 'undefined'){
-  		      Core.lastActivatedTabId = tab.id;
-  		      Core.lastActivatedTabUrl = tab.url;
-  			    var newTab = new NTab(tab.url);
-      			Core.historyOfTabs.addDistinct(newTab);
-      			Core.historyOfTabs.get(newTab).actions.add(new Timespan(new Date()));
-		      }
-		    }
-		    
-		  });
-		});
+	  console.log("Active Window's id: " +  windowId);
+
+    var windowHistory = Extension.windows.get(windowId);
+    if(typeof(windowHistory) != 'undefined'){
+      windowHistory.prepareMessage();
+      windowHistory.clear();
+  	
+  		//chrome.tabs.query({active:true, windowId:windowId}, function(tabs){tabs.forEach(function(el){console.log(el.url + " " + el.id)})})
+  		
+  		chrome.windows.getAll({}, function(windows){
+  		  windows.forEach(function(window){
+  		    
+  		    if(window.focused){
+  		      chrome.tabs.query({active:true, windowId:windowId}, function(tabs){
+  		        tabs.forEach(function(tab){
+  		          if(typeof(tab) != 'undefined'){
+          		      windowHistory.lastTabId = tab.id;
+          		      windowHistory.lastTabUrl = tab.url;
+          		      windowHistory.lastBegin = new Date();
+  		          }
+  		        });
+  		      });
+  		      
+  		      
+  		    }
+  		    
+  		  });
+  		});
+  	}
 	}
 	
 }
 
 /**/
 function OnCreated(window){
-	
+  console.log("Created " + window.id);
+	Extension.windows.add(new Core(window.id));
 }
 
 /**/
 function OnRemoved(windowId){
-
+  console.log("Removed " + windowId);
+  Extension.windows.del(windowId);
 }
 
 /**/
@@ -92,19 +97,18 @@ function CheckWindowsFocus(){
       if(windows[i].focused){
         howManyFocused++;
       }
+      else{
+        var windowHistory = Extension.windows.get(windows[i].id);
+        windowHistory.prepareMessage();
+        windowHistory.clear();
+      }
     }
     
     if(howManyFocused == 0){
-      if(Core.lastActivatedTabId != -1)
-  		  {
-    			var newTab = new NTab(Core.lastActivatedTabUrl);
-    			Core.historyOfTabs.get(newTab).actions.last().end = new Date();		
-  		  }
-  		
-  		Core.lastActivatedTabId = -1;
-  		Core.lastActivatedTabUrl = "";
+  		console.log("There is no active windows");
     }
     else{
+      console.log("There is: " + howManyFocused + " focused windows!");
     }
   });
 
@@ -113,7 +117,7 @@ function CheckWindowsFocus(){
 
 /**/
 function Intervals(){
-  setInterval(CheckWindowsFocus, 2500);
+  setInterval(CheckWindowsFocus, 10000);
 }
 
 Intervals();

@@ -57,11 +57,7 @@ function NTab(url){
 	/**/
 	this.toString = function(){
 	  var str = this.url + "\n";
-	  str += this.actions.items.length + "\n";
-	  this.actions.items.forEach(function(el){
-	    str += el.toString() + "\n"; 
-	  });
-	  
+	  str += this.counter + "\n";
 	  return str;
 	};
 }
@@ -146,11 +142,6 @@ function List(){
 	};
 	
 	/**/
-	this.clear = function(){
-	  this.items = [];
-	};
-	
-	/**/
 	this.get = function(item){
 		for(var i = this.items.length - 1; i >= 0; i--) {
 			if(this.items[i].compare(item)) {
@@ -163,108 +154,49 @@ function List(){
 	this.last = function(){
 		return this.items[ this.items.length - 1];
 	};
-	
-	/*EXTENDED AND ONLY FOR TESTS */
+
 	/**/
-	this.getDomains = function(){
-		this.items.forEach(function(it){
-				console.log(it.domain());
-			}
-		);
-	};
-	
-	/**/
-	this.getDiffs = function(){
-		var ar = [];
-		this.items.forEach(function(it){
-				var obj = {};
-				obj["url"] = it.domain();
-				obj["diff"] = it.allDiffs();
-				obj.compare = function(toCompare){
-				  if(this["url"] == toCompare["url"])
-				    return true;
-				  return false;
-				};
-				ar.push(obj);
-				
-				console.log(it.url + " " + it.allDiffs());				
-			}
-		);
-	//	return ar;
-		
-		var arr = new List();
-		
-		arr.add(ar[0]);
-		for(i = 1; i < ar.length; i++){
-		  if(arr.exist(ar[i])){
-		    arr.get(ar[i])["diff"] += ar[i]["diff"];
-		  }
-		  else{
-		    arr.add(ar[i]);
-		  }
-		}
-		return arr.items;
-		
+	this.clear = function(){
+	  this.items = [];
 	};
 	
 	/**/
 	this.toString = function(){
-	  var str = "";
-	  
+	  var text = "";
 	  this.items.forEach(function(el){
-	    str += el.toString();
-	  });
-	  
-	  return str;
-	};
-	
-	/**/
-	this.fromString = function(str){
-	  this.clear();
-	  
-	  var splittedStr = str.split('\n');
-	  var index = 0;
-	  var length = splittedStr.length;
-	  
-	  while(index < length && splittedStr[index] != ""){
-	    var newTab = new NTab(splittedStr[index]);
-	    index++;
-	    this.addDistinct(newTab);
-	    
-	    var currentObject = this.get(newTab);
-	    
-	    var amountOfTimespans = splittedStr[index];
-	    index++;
-	    
-	    for(i = 0; i < amountOfTimespans; i++){
-	      var timespan = splittedStr[index];
-	      
-	      var begin = timespan.split(',')[0];
-	      var end = timespan.split(',')[1];
-	      
-	      var ts = new Timespan(new Date(begin));
-	      ts.end = new Date(end);
-	      
-	      currentObject.actions.add(ts);
-	      
-	      
-	      index++;
-	    }
-	  }
+	    text += el.toString() + "\n";
+	    });
+	 return text;
 	};
 }
 
-/**/
-function NWindow(id){
-	
-	/**/
-	this.id = id;
-	
-	/**/
-	this.isActive = false;
-	
-	/**/
-	this.compare = function(toCompare){	
-		return this.id == toCompare.id ? true : false;
-	};
+/*Core*/
+function Core(windowId){
+  this.lastTabId = -1;
+  this.lastTabUrl = "";
+  this.lastTabBegin = 'undefined';
+  this.windowId = windowId;
+  
+  this.prepareMessage = function(){
+    if(this.lastTabId != -1){
+      var text = this.lastTabUrl + "\n";
+    	text += "1\n";
+    	text += Math.floor((new Date() - this.lastBegin) / 1000);
+    	//console.log(text);
+    	Extension.history.addDistinct(new NTab(this.lastTabUrl));
+    	Extension.history.get(new NTab(this.lastTabUrl)).counter += Math.floor((new Date() - this.lastBegin) / 1000);
+    	return text;
+    }
+  };
+  
+  this.clear = function(){
+    this.lastTabId = -1;
+		this.lastTabUrl = "";
+		this.lastBegin = "undefined";
+  };
+  
+  this.compare = function(toCompare){
+    return (this.windowId == toCompare);
+  };
+  
 }
