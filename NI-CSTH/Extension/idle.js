@@ -47,9 +47,13 @@ function OnFocusChanged(windowId){
 
     var windowHistory = Extension.windows.get(windowId);
     if(typeof(windowHistory) != 'undefined'){
-      windowHistory.prepareMessage();
+            
+      windowHistory.prepareMessage(function(result){
+        Messaging.sendMessage("Write", result  + "\n");
+      });
+              
       windowHistory.clear();
-  	
+    }
   		//chrome.tabs.query({active:true, windowId:windowId}, function(tabs){tabs.forEach(function(el){console.log(el.url + " " + el.id)})})
   		
   		chrome.windows.getAll({}, function(windows){
@@ -61,19 +65,14 @@ function OnFocusChanged(windowId){
   		          if(typeof(tab) != 'undefined'){
           		      windowHistory.lastTabId = tab.id;
           		      windowHistory.lastTabUrl = tab.url;
-          		      windowHistory.lastBegin = new Date();
+          		      windowHistory.lastTabBegin = new Date();
   		          }
   		        });
   		      });
-  		      
-  		      
   		    }
-  		    
-  		  });
+  	   });
   		});
   	}
-	}
-	
 }
 
 /**/
@@ -99,8 +98,14 @@ function CheckWindowsFocus(){
       }
       else{
         var windowHistory = Extension.windows.get(windows[i].id);
-        windowHistory.prepareMessage();
-        windowHistory.clear();
+        if(typeof(windowHistory) != 'undefined'){
+            
+              windowHistory.prepareMessage(function(result){
+                Messaging.sendMessage("Write", result  + "\n");
+              });
+              
+              windowHistory.clear();
+            }
       }
     }
     

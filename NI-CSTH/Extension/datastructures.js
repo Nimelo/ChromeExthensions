@@ -177,15 +177,17 @@ function Core(windowId){
   this.lastTabBegin = 'undefined';
   this.windowId = windowId;
   
-  this.prepareMessage = function(){
+  this.prepareMessage = function(callback){
     if(this.lastTabId != -1){
       var text = this.lastTabUrl + "\n";
-    	text += "1\n";
-    	text += Math.floor((new Date() - this.lastBegin) / 1000);
+      var timespan = Math.floor((new Date() - this.lastTabBegin) / 1000);
+    	text += timespan;
     	//console.log(text);
+    	//console.log(timespan);
     	Extension.history.addDistinct(new NTab(this.lastTabUrl));
-    	Extension.history.get(new NTab(this.lastTabUrl)).counter += Math.floor((new Date() - this.lastBegin) / 1000);
-    	return text;
+    	Extension.history.get(new NTab(this.lastTabUrl)).counter += timespan;
+    	if(timespan != 0)
+    	  callback(text);
     }
   };
   

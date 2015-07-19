@@ -28,15 +28,19 @@ function OnUpdated(tabId, changeInfo, tab)
 	
   chrome.tabs.get(tabId, function(tab){
         var windowHistory = Extension.windows.get(tab.windowId);
-        windowHistory.prepareMessage();
-        windowHistory.clear();
+        if(typeof(windowHistory) != 'undefined'){
+            
+              windowHistory.prepareMessage(function(result){
+                Messaging.sendMessage("Write", result  + "\n");
+              });
+              
+              windowHistory.clear();
+            }
         windowHistory.lastTabId = tab.id;
         windowHistory.lastTabUrl = tab.url;
-        windowHistory.lastBegin = new Date();
+        windowHistory.lastTabBegin = new Date();
       }
   );
-   // Messaging.sendMessage("Write", Core.historyOfTabs.toString());
-
 }
 
 /**/
@@ -44,16 +48,28 @@ function OnActivated(info)
 {
 	console.log("OnActivated");
 	
-	
+
   chrome.tabs.get(info.tabId, function(tab){
-        var windowHistory = Extension.windows.get(tab.windowId);
-        windowHistory.prepareMessage();
-        windowHistory.clear();
-        windowHistory.lastTabId = tab.id;
-        windowHistory.lastTabUrl = tab.url;
-        windowHistory.lastBegin = new Date();
-      }
+    	try{
+          var windowHistory = Extension.windows.get(tab.windowId);
+          if(typeof(windowHistory) != 'undefined'){
+            
+              windowHistory.prepareMessage(function(result){
+                Messaging.sendMessage("Write", result  + "\n");
+              });
+              
+              windowHistory.clear();
+            }
+            windowHistory.lastTabId = tab.id;
+            windowHistory.lastTabUrl = tab.url;
+            windowHistory.lastTabBegin = new Date();
+          }
+    	catch(ex){
+	      console.log(ex);
+	    }
+    }
   );
+	
 	
 	//Messaging.sendMessage("Write", Core.historyOfTabs.toString());
 }
@@ -64,8 +80,15 @@ function OnRemoved(tabId, removeInfo)
 	console.log("OnRemoved");
 	
   var windowHistory = Extension.windows.get(removeInfo.windowId);
-  windowHistory.prepareMessage();
-  windowHistory.clear();
+  if(typeof(windowHistory) != 'undefined'){
+            
+              windowHistory.prepareMessage(function(result){
+                Messaging.sendMessage("Write", result  + "\n");
+              });
+              
+              windowHistory.clear();
+            }
+
 
 	
 	//Messaging.sendMessage("Write", Core.historyOfTabs.toString());
