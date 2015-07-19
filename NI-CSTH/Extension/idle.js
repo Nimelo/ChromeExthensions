@@ -53,7 +53,7 @@ function OnFocusChanged(windowId){
       });
               
       windowHistory.clear();
-    }
+    
   		//chrome.tabs.query({active:true, windowId:windowId}, function(tabs){tabs.forEach(function(el){console.log(el.url + " " + el.id)})})
   		
   		chrome.windows.getAll({}, function(windows){
@@ -73,6 +73,7 @@ function OnFocusChanged(windowId){
   	   });
   		});
   	}
+	}
 }
 
 /**/

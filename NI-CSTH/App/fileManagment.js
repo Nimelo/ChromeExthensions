@@ -112,7 +112,7 @@ FileManagment.addToTemporary = function(element, callback){
 /**/
 FileManagment.getCurrentFileName = function(){
   var today = new Date();
-  return today.getFullYear().toString() + (today.getMonth + 1).toString() + today.getDate().toString() + ".dat";
+  return today.getFullYear().toString() + (today.getMonth() + 1).toString() + today.getDate().toString() + ".dat";
 };
 
 /**/

@@ -21,7 +21,7 @@ $(function () {
           var text = response;
           //console.log(text);
           var history = HistoryEntry.fromString(text);
-
+          console.log(history);
           var data = [];
           
           history.items.forEach(function(el){
@@ -29,6 +29,21 @@ $(function () {
                       y: Number(el.counter)}
             );
           });
+          
+          data.sort(function(a,b){
+            return b.y - a.y;
+          });
+          
+          if(data.length > 10){
+            var data2 = data.slice(0,9);
+            data2.push({name: "Others", y: Number(0)});
+            
+            data.slice(9).forEach(function(el){
+              data2[9].y += el.y;
+            });
+            data = data2;
+          }
+          
           console.log(data);
           // Build the chart
           $('#container').highcharts({

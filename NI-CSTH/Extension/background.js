@@ -27,20 +27,33 @@ function OnUpdated(tabId, changeInfo, tab)
 	console.log("OnUpdated");
 	
   chrome.tabs.get(tabId, function(tab){
-        var windowHistory = Extension.windows.get(tab.windowId);
-        if(typeof(windowHistory) != 'undefined'){
-            
-              windowHistory.prepareMessage(function(result){
-                Messaging.sendMessage("Write", result  + "\n");
-              });
+        if (chrome.runtime.lastError) {
+        console.log(chrome.runtime.lastError.message);
+    } else {
+     
+    //Checking if update is fired on active tab!
+    chrome.tabs.query({active:true}, function(tabs){
+      
+        if(tabs.some(function(el, index, array){
+          return el.id == tab.id;
+        })){
+        
+          var windowHistory = Extension.windows.get(tab.windowId);
+          if(typeof(windowHistory) != 'undefined'){
               
-              windowHistory.clear();
-            }
-        windowHistory.lastTabId = tab.id;
-        windowHistory.lastTabUrl = tab.url;
-        windowHistory.lastTabBegin = new Date();
-      }
-  );
+                windowHistory.prepareMessage(function(result){
+                  Messaging.sendMessage("Write", result  + "\n");
+                });
+                
+                windowHistory.clear();
+                windowHistory.lastTabId = tab.id;
+                windowHistory.lastTabUrl = tab.url;
+                windowHistory.lastTabBegin = new Date();
+          }
+        }
+    });
+  }
+  });
 }
 
 /**/
@@ -50,7 +63,11 @@ function OnActivated(info)
 	
 
   chrome.tabs.get(info.tabId, function(tab){
-    	try{
+    	if (chrome.runtime.lastError) {
+        console.log(chrome.runtime.lastError.message);
+    } else {
+        // Tab exists
+    	    if(typeof(tab) == 'undefined') return;
           var windowHistory = Extension.windows.get(tab.windowId);
           if(typeof(windowHistory) != 'undefined'){
             
@@ -59,14 +76,12 @@ function OnActivated(info)
               });
               
               windowHistory.clear();
-            }
+            
             windowHistory.lastTabId = tab.id;
             windowHistory.lastTabUrl = tab.url;
             windowHistory.lastTabBegin = new Date();
           }
-    	catch(ex){
-	      console.log(ex);
-	    }
+    }   
     }
   );
 	
