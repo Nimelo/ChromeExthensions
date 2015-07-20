@@ -82,7 +82,7 @@ FileManagment.readData = function (fileName, callback){
           reader.onloadend = function(e){
             
             //FileManagment.result = this.result;
-            callback(this.result);
+            callback(fileName + "\n" + this.result);
             
            /* chrome.syncFileSystem.getFileStatus(FileManagment.file, function(fs)
             {
@@ -112,7 +112,7 @@ FileManagment.addToTemporary = function(element, callback){
 /**/
 FileManagment.getCurrentFileName = function(){
   var today = new Date();
-  return today.getFullYear().toString() + (today.getMonth() + 1).toString() + today.getDate().toString() + ".dat";
+  return "!" + today.getFullYear().toString() + "-" +(today.getMonth() + 1).toString() + "-" + today.getDate().toString() + ".dat";
 };
 
 /**/

@@ -45,11 +45,11 @@ function OnMessageExternalHandler(request, sender, sendResponse){
         
       case "Read":
         OnReadRequest(request, sender);
-        FileManagment.readData(function(result){
+        /*FileManagment.readData(function(result){
           Messaging.sendMessage(sender.id, "", result);
           //new Notification('Read', {body: result});
           }
-        );
+        );*/
        
         break;
       default:
@@ -68,30 +68,39 @@ function OnReadRequest(request, sender){
       break;
       
     case "Month":
+      console.log("Request for monthly history!");
+      
       var month = new Date().getMonth() + 1;
       var year = new Date().getFullYear();
-      var names = DataHelper.prepareNamesMonth(year, month);
+      var names = DateHelper.prepareNamesMonth(year, month);
       this.tmpResult = "";
-      
-      names.forEach(function(names, index){
-        FileManagment.readData(name, function(result, index){  
-          if(index != names.length){
-            this.tmpResult += result;
+      names.forEach(function(name, index, array){
+        //console.log(index);
+        if(index != names.length - 1){
+          FileManagment.readData(name, function(result){ 
+            if(result != "")
+              this.tmpResult +=  result;
+        });
           }
           else{
-            this.tmpResult += result;
+            FileManagment.readData(name, function(result){ 
+            if(result != "")
+              this.tmpResult += result;
+            console.log(this.tmpResult);
             Messaging.sendMessage(sender.id, "", this.tmpResult);
-          }
         });
+          }
+        
       })
-      console.log("Request for monthly history!");
+      
       break;
     
     case "Today": 
+      console.log("Request for today's history!");
       FileManagment.readData(FileManagment.getCurrentFileName(), function(result){       
           Messaging.sendMessage(sender.id, "", result);
         });
-      console.log("Request for today's history!");
+      
       break;
       
     default:

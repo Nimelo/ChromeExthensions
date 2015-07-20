@@ -1,16 +1,21 @@
 {
   "manifest_version": 2,
 
-  "name": "Tests",
-  "description": "Tests description",
+  "name": "NI-CSTH",
+  "description": "NI-CSTH description",
   "version": "1.0",
 
   "browser_action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup/html/popup.html"
   },
   
   "background":{
-	"scripts":  ["assets/jquery-2.1.4.min.js","websocket.js","datastructures.js","messaging.js", "background.js", "idle.js"],
+	"scripts":  ["assets/jquery-2.1.4.min.js",
+	            "cores/js/websocket.js",
+	            "cores/js/datastructures.js",
+	            "cores/js/messaging.js", 
+	            "cores/js/background.js", 
+	            "cores/js/idle.js"],
 	"persistent": true
   },
   "permissions": [

@@ -41,7 +41,7 @@ HistoryEntry.getDomain = function(url){
 HistoryEntry.fromString = function(str){
   var list = new List();
   var splittedStr = str.split('\n');
-  var index = 0;
+  var index = 1;
   
   while(index < splittedStr.length - 1
         && splittedStr[index] != '\n'){
@@ -111,6 +111,10 @@ function List(){
 		}
 	};
 	
+	/**/
+	this.elementAt = function(index){
+	  return this.items[index];
+	}
 	/**/
 	this.last = function(){
 		return this.items[ this.items.length - 1];

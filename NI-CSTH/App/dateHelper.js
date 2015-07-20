@@ -16,8 +16,8 @@ DateHelper.prepareNamesYear = function(year){
   var names = [];
     
   for(i = 1; i <= 12; i++){
-    for(j = 1; j <= numberOfDays(year, i); j++){
-      names.push(year.toString() + i.toString() + j.toString() + ".dat");
+    for(j = 1; j <= DateHelper.numberOfDays(year, i); j++){
+      names.push("!" + year.toString() + "-" + i.toString() + "-" + j.toString() + ".dat");
     }
   }
   
@@ -28,8 +28,8 @@ DateHelper.prepareNamesYear = function(year){
 DateHelper.prepareNamesMonth = function(year, month){
   var names = [];
   
-  for(j = 1; j <= numberOfDays(year, month); j++){
-      names.push(year.toString() + i.toString() + j.toString() + ".dat");
+  for(j = 1; j <= DateHelper.numberOfDays(year, month); j++){
+      names.push("!" + year.toString() + "-" + month.toString() + "-" + j.toString() + ".dat");
   }
   
   return names; 
