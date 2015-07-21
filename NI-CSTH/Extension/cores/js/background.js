@@ -24,11 +24,11 @@ function OnCreated(tab){
 /**/
 function OnUpdated(tabId, changeInfo, tab)
 {
-	console.log("OnUpdated");
+	//console.log("OnUpdated");
 	
   chrome.tabs.get(tabId, function(tab){
         if (chrome.runtime.lastError) {
-        console.log(chrome.runtime.lastError.message);
+        //console.log(chrome.runtime.lastError.message);
     } else {
      
     //Checking if update is fired on active tab!
@@ -37,7 +37,7 @@ function OnUpdated(tabId, changeInfo, tab)
         if(tabs.some(function(el, index, array){
           return el.id == tab.id;
         })){
-        
+          Extension.windows.addDistinct(new Core(tab.windowId));
           var windowHistory = Extension.windows.get(tab.windowId);
           if(typeof(windowHistory) != 'undefined'){
               
@@ -59,7 +59,7 @@ function OnUpdated(tabId, changeInfo, tab)
 /**/
 function OnActivated(info)
 {
-	console.log("OnActivated");
+	//console.log("OnActivated");
 	
 
   chrome.tabs.get(info.tabId, function(tab){
@@ -68,6 +68,7 @@ function OnActivated(info)
     } else {
         // Tab exists
     	    if(typeof(tab) == 'undefined') return;
+    	    Extension.windows.addDistinct(new Core(tab.windowId));
           var windowHistory = Extension.windows.get(tab.windowId);
           if(typeof(windowHistory) != 'undefined'){
             
@@ -92,8 +93,8 @@ function OnActivated(info)
 /**/
 function OnRemoved(tabId, removeInfo)
 {
-	console.log("OnRemoved");
-	
+	//console.log("OnRemoved");
+	Extension.windows.addDistinct(new Core(tab.windowId));
   var windowHistory = Extension.windows.get(removeInfo.windowId);
   if(typeof(windowHistory) != 'undefined'){
             

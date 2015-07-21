@@ -86,7 +86,7 @@ function OnReadRequest(request, sender){
             FileManagment.readData(name, function(result){ 
             if(result != "")
               this.tmpResult += result;
-            console.log(this.tmpResult);
+            //console.log(this.tmpResult);
             Messaging.sendMessage(sender.id, "", this.tmpResult);
         });
           }

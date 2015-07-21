@@ -31,7 +31,7 @@ function OnFocusChanged(windowId){
 	
 	if(windowId == chrome.windows.WINDOW_ID_NONE)
 	{
-		console.log("WINDOW_ID_NONE!");
+		//console.log("WINDOW_ID_NONE!");
     CheckWindowsFocus();
   	//Core.prepareMessage();
     //Core.clear();
@@ -39,11 +39,11 @@ function OnFocusChanged(windowId){
 	}
 	else if(windowId == chrome.windows.WINDOW_ID_CURRENT)
 	{
-		console.log("WINDOW_ID_CURRENT!");
+		//console.log("WINDOW_ID_CURRENT!");
 	}
 	else
 	{
-	  console.log("Active Window's id: " +  windowId);
+	  //console.log("Active Window's id: " +  windowId);
 
     var windowHistory = Extension.windows.get(windowId);
     if(typeof(windowHistory) != 'undefined'){
@@ -79,7 +79,7 @@ function OnFocusChanged(windowId){
 /**/
 function OnCreated(window){
   console.log("Created " + window.id);
-	Extension.windows.add(new Core(window.id));
+	Extension.windows.addDistinct(new Core(window.id));
 }
 
 /**/
@@ -111,10 +111,10 @@ function CheckWindowsFocus(){
     }
     
     if(howManyFocused == 0){
-  		console.log("There is no active windows");
+  		//console.log("There is no active windows");
     }
     else{
-      console.log("There is: " + howManyFocused + " focused windows!");
+     // console.log("There is: " + howManyFocused + " focused windows!");
     }
   });
 
