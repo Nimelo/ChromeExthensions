@@ -1,9 +1,9 @@
-$(document).ready(function () {
+$(function () {
     if ("WebSocket" in window) {
  
         console.log('WebSocket is supported by your browser.');
  
-        var serviceUrl = 'ws://localhost:4649/Echo';
+        var serviceUrl = 'ws://localhost:4649/FileHistory';
         var socket = new WebSocket(serviceUrl);
  
         socket.onopen = function () {

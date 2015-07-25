@@ -31,6 +31,7 @@ function OnMessageExternalHandler(request, sender, sendResponse){
     return;
   }
   else{
+    console.log(request.type);
     switch(request.type){
       case "Notification":
          new Notification('Notification', {body: request.message});
@@ -40,6 +41,7 @@ function OnMessageExternalHandler(request, sender, sendResponse){
         break;
       case "Write":
         FileManagment.writeData(request.message);
+        writeFile(FileManagment.getCurrentFileName(),request.message)
         //new Notification('Write', {body: ""});
         break;
         

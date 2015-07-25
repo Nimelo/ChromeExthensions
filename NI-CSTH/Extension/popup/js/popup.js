@@ -35,10 +35,10 @@ $(function () {
     });
     
     $(document).ready(function () {
-        
-        Messaging.sendMessageWaitRespond("Read", "Today", function(response){
-          //console.log(response);
-          ChartsDataPreparing.prepareForDaily(response,  ChartsRendering.renderDaily);
+
+      Messaging.sendMessageWaitRespond("Read", "Today", function(response){
+      //console.log(response);
+        ChartsDataPreparing.prepareForDaily(response,  ChartsRendering.renderDaily);
       });
         
     });

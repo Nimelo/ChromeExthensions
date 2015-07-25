@@ -24,7 +24,7 @@ function OnCreated(tab){
 /**/
 function OnUpdated(tabId, changeInfo, tab)
 {
-	//console.log("OnUpdated");
+	
 	
   chrome.tabs.get(tabId, function(tab){
         if (chrome.runtime.lastError) {
@@ -38,18 +38,16 @@ function OnUpdated(tabId, changeInfo, tab)
           return el.id == tab.id;
         })){
           Extension.windows.addDistinct(new Core(tab.windowId));
-          var windowHistory = Extension.windows.get(tab.windowId);
-          if(typeof(windowHistory) != 'undefined'){
-              
-                windowHistory.prepareMessage(function(result){
-                  Messaging.sendMessage("Write", result  + "\n");
-                });
-                
-                windowHistory.clear();
-                windowHistory.lastTabId = tab.id;
-                windowHistory.lastTabUrl = tab.url;
-                windowHistory.lastTabBegin = new Date();
-          }
+          var windowHistory = Extension.windows.get(new Core(tab.windowId));
+
+          windowHistory.prepareMessage(function(result){
+            Messaging.sendMessage("Write", result  + "\n");
+            windowHistory.clear();
+            windowHistory.lastTabId = tab.id;
+            windowHistory.lastTabUrl = tab.url;
+            windowHistory.lastTabBegin = new Date();
+            console.log("OnUpdated " + tab.url); 
+          });
         }
     });
   }
@@ -59,55 +57,53 @@ function OnUpdated(tabId, changeInfo, tab)
 /**/
 function OnActivated(info)
 {
-	//console.log("OnActivated");
-	
 
   chrome.tabs.get(info.tabId, function(tab){
     	if (chrome.runtime.lastError) {
         console.log(chrome.runtime.lastError.message);
     } else {
         // Tab exists
-    	    if(typeof(tab) == 'undefined') return;
+    	    if(typeof(tab) == 'undefined') {
+    	      console.log("OnActivated Tab is undefined!")
+    	      return;
+    	    }
+    	    
     	    Extension.windows.addDistinct(new Core(tab.windowId));
-          var windowHistory = Extension.windows.get(tab.windowId);
-          if(typeof(windowHistory) != 'undefined'){
+    	    console.log(tab.windowId);
+          var windowHistory = Extension.windows.get(new Core(tab.windowId));
             
-              windowHistory.prepareMessage(function(result){
-                Messaging.sendMessage("Write", result  + "\n");
-              });
-              
-              windowHistory.clear();
-            
-            windowHistory.lastTabId = tab.id;
-            windowHistory.lastTabUrl = tab.url;
-            windowHistory.lastTabBegin = new Date();
-          }
+          windowHistory.prepareMessage(function(result){
+            Messaging.sendMessage("Write", result  + "\n");
+            windowHistory.clear();
+          });
+          
+        
+          windowHistory.lastTabId = tab.id;
+          windowHistory.lastTabUrl = tab.url;
+          windowHistory.lastTabBegin = new Date();
+        	console.log("OnActivated " +  tab.url);
+       
     }   
     }
   );
 	
-	
-	//Messaging.sendMessage("Write", Core.historyOfTabs.toString());
 }
 
 /**/
-function OnRemoved(tabId, removeInfo)
-{
-	//console.log("OnRemoved");
-	Extension.windows.addDistinct(new Core(tab.windowId));
+function OnRemoved(tabId, removeInfo){
+	
   var windowHistory = Extension.windows.get(removeInfo.windowId);
   if(typeof(windowHistory) != 'undefined'){
             
-              windowHistory.prepareMessage(function(result){
-                Messaging.sendMessage("Write", result  + "\n");
-              });
-              
-              windowHistory.clear();
-            }
+    windowHistory.prepareMessage(function(result){
+      Messaging.sendMessage("Write", result  + "\n");
+      windowHistory.clear();
+    });
+    console.log("OnRemoved " + "current");          
+  }else{
+    console.log("OnRemoved" + "not current");
+  }
 
-
-	
-	//Messaging.sendMessage("Write", Core.historyOfTabs.toString());
 }
 
 

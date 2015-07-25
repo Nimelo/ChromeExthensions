@@ -43,36 +43,36 @@ function OnFocusChanged(windowId){
 	}
 	else
 	{
-	  //console.log("Active Window's id: " +  windowId);
+	  console.log("Active Window's id: " +  windowId);
+	  
+	  chrome.windows.getLastFocused(function(window){
+	    var tmp = Extension.windows.get(new Core(window.id));
+	    if(typeof(tmp) != 'undefined'){
+	      tmp.prepareMessage(function(result){
+	      Messaging.sendMessage("Write", result  + "\n");
+	    });
+	    }
+	    
+	  });
+	  
+	  chrome.tabs.query({active:true, windowId:windowId}, function(tabs){
+      
+          tab = tabs[0];
+          if(typeof(tab) == 'undefined') return;
+          Extension.windows.addDistinct(new Core(tab.windowId));
+          var windowHistory = Extension.windows.get(new Core(tab.windowId));
 
-    var windowHistory = Extension.windows.get(windowId);
-    if(typeof(windowHistory) != 'undefined'){
-            
-      windowHistory.prepareMessage(function(result){
-        Messaging.sendMessage("Write", result  + "\n");
-      });
+          windowHistory.prepareMessage(function(result){
+            Messaging.sendMessage("Write", result  + "\n");
+            windowHistory.clear();
+          });
+            windowHistory.lastTabId = tab.id;
+            windowHistory.lastTabUrl = tab.url;
+            windowHistory.lastTabBegin = new Date();
+            console.log("OnFocusChanged " + tab.url); 
+        }
+    );
               
-      windowHistory.clear();
-    
-  		//chrome.tabs.query({active:true, windowId:windowId}, function(tabs){tabs.forEach(function(el){console.log(el.url + " " + el.id)})})
-  		
-  		chrome.windows.getAll({}, function(windows){
-  		  windows.forEach(function(window){
-  		    
-  		    if(window.focused){
-  		      chrome.tabs.query({active:true, windowId:windowId}, function(tabs){
-  		        tabs.forEach(function(tab){
-  		          if(typeof(tab) != 'undefined'){
-          		      windowHistory.lastTabId = tab.id;
-          		      windowHistory.lastTabUrl = tab.url;
-          		      windowHistory.lastTabBegin = new Date();
-  		          }
-  		        });
-  		      });
-  		    }
-  	   });
-  		});
-  	}
 	}
 }
 
@@ -85,7 +85,7 @@ function OnCreated(window){
 /**/
 function OnRemoved(windowId){
   console.log("Removed " + windowId);
-  Extension.windows.del(windowId);
+  Extension.windows.del(new Core(windowId));
 }
 
 /**/
@@ -98,14 +98,14 @@ function CheckWindowsFocus(){
         howManyFocused++;
       }
       else{
-        var windowHistory = Extension.windows.get(windows[i].id);
+        Extension.windows.addDistinct(new Core(windows[i].id));
+        var windowHistory = Extension.windows.get(new Core(windows[i].id));
         if(typeof(windowHistory) != 'undefined'){
             
               windowHistory.prepareMessage(function(result){
                 Messaging.sendMessage("Write", result  + "\n");
+                windowHistory.clear();
               });
-              
-              windowHistory.clear();
             }
       }
     }
@@ -123,7 +123,8 @@ function CheckWindowsFocus(){
 
 /**/
 function Intervals(){
-  setInterval(CheckWindowsFocus, 1000);
+  setInterval(CheckWindowsFocus, 4000);
 }
 
 Intervals();
+

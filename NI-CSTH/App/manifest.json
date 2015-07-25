@@ -13,7 +13,7 @@
 
   "app": {
     "background": {
-      "scripts": ["notify.js","dateHelper.js", "fileManagment.js", "background.js", "messaging.js"],
+      "scripts": ["notify.js","socket.js", "websocket.js", "dateHelper.js", "fileManagment.js", "background.js", "messaging.js"],
       "persistent": true
     }
   },

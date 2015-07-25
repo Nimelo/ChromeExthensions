@@ -147,10 +147,7 @@ function Core(windowId){
       var text = this.lastTabUrl + "\n";
       var timespan = Math.floor((new Date() - this.lastTabBegin) / 1000);
     	text += timespan;
-    	//console.log(text);
-    	//console.log(timespan);
-      //Extension.history.addDistinct(new HistoryEntry(this.lastTabUrl));
-    	//Extension.history.get(new HistoryEntry(this.lastTabUrl)).counter += timespan;
+    	console.log(text);
     	if(timespan != 0)
     	  callback(text);
     }
@@ -159,11 +156,11 @@ function Core(windowId){
   this.clear = function(){
     this.lastTabId = -1;
 		this.lastTabUrl = "";
-		this.lastBegin = "undefined";
+		this.lastTabBegin = "undefined";
   };
   
   this.compare = function(toCompare){
-    return (this.windowId == toCompare);
+    return (this.windowId == toCompare.windowId);
   };
   
 }
