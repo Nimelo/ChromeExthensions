@@ -56,19 +56,16 @@ ChartsDataPreparing.prepareForMonthly = function(callback){
         
         var el1 = histEntry.elementAt(0);
         if(typeof(el1) != 'undefined'){
-          //console.log("new el1" + i)
           MonthlyChartSeries.series1[currentDay - 1] = {name: el1.domain, y: Math.floor(el1.counter / 60)};
         }  
         
         var el2 = histEntry.elementAt(1);
         if(typeof(el2) != 'undefined'){
-           //console.log("new el2" + i)
           MonthlyChartSeries.series2[currentDay - 1] = {name: el2.domain, y: Math.floor(el2.counter / 60)};
         }  
         
         var el3 = histEntry.elementAt(2);
         if(typeof(el3) != 'undefined'){
-          // console.log("new el3" + i)
           MonthlyChartSeries.series3[currentDay - 1] = {name: el3.domain, y: Math.floor(el3.counter / 60)};
         }
         
@@ -81,24 +78,14 @@ ChartsDataPreparing.prepareForMonthly = function(callback){
 function MonthlyChartSeries(){
     
 }
-MonthlyChartSeries.isNext = true;
+
 MonthlyChartSeries.series1 = [];
 MonthlyChartSeries.series2 = [];
 MonthlyChartSeries.series3 = [];
 MonthlyChartSeries.series = [];
 MonthlyChartSeries.namesOfCurrentMonth = [];
 MonthlyChartSeries.amountOfDays = 0;
-MonthlyChartSeries.index = 0;
-MonthlyChartSeries.getNextIndex = function(){
-  /*if(MonthlyChartSeries.amountOfDays > MonthlyChartSeries.index){
-    return MonthlyChartSeries.index++;
-  }else{
-    MonthlyChartSeries.index = 0;
-    return MonthlyChartSeries.index++;
-  }*/
-  MonthlyChartSeries.index += 1;
-  MonthlyChartSeries.isNext = true;
-}
+
 
 function Init(){
     MonthlyChartSeries.namesOfCurrentMonth = DateHelper.prepareNamesMonth(new Date().getFullYear(), new Date().getMonth() + 1);

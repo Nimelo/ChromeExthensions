@@ -1,109 +1,44 @@
-/*On start up*/
-
-function Extension(){
+/**/
+function Idle(){
   
 }
 
-Extension.windows = new List();
+/**/
+Idle.detectionInterval = 60;
 
-Extension.history = new List();
-/*Occurs when focus of any window is changing*/
-chrome.windows.onFocusChanged.addListener(OnFocusChanged);
+/**/
+chrome.storage.sync.get("Idle.detectionInterval", function(obj){
+  if(typeof(obj["Idle.detectionInterval"]) != 'undefined'){
+    Idle.detectionInterval = obj["Idle.detectionInterval"]
+    chrome.idle.setDetectionInterval(Idle.detectionInterval);
+  }
+});
 
-/*Occurs when new window is creating*/
-chrome.windows.onCreated.addListener(OnCreated);
-
-/*Occurs when any window is closing*/
-chrome.windows.onRemoved.addListener(OnRemoved);
-
-
-
-/*ReadMe */
-/*
-- chrome.windows.WINDOW_ID_NONE  => When minimize command is send
-- chrome.windows.WINDOW_ID_CURRENT => Don't really know when
-/
-
-/*FUNCTIONS*/
-
-
-function OnFocusChanged(windowId){
-	
-	if(windowId == chrome.windows.WINDOW_ID_NONE)
-	{
-		//console.log("WINDOW_ID_NONE!");
-    CheckWindowsFocus();
-  	//Core.prepareMessage();
-    //Core.clear();
-		
-	}
-	else if(windowId == chrome.windows.WINDOW_ID_CURRENT)
-	{
-		//console.log("WINDOW_ID_CURRENT!");
-	}
-	else
-	{
-	  console.log("Active Window's id: " +  windowId);
-	  
-	  chrome.windows.getLastFocused(function(window){
-	    var tmp = Extension.windows.get(new Core(window.id));
-	    if(typeof(tmp) != 'undefined'){
-	      tmp.prepareMessage(function(result){
-	      Messaging.sendMessage({
-                type: "Write",
-                message: result  + "\n"
-              });
-	    });
-	    }
-	    
-	  });
-	  
-	  chrome.tabs.query({active:true, windowId:windowId}, function(tabs){
+/**/
+chrome.idle.onStateChanged.addListener(function(idleStatus){
+  console.log(idleStatus);
+  switch(idleStatus){
+    case "active":
+      ChangeOnActive();
+      break;
+    case "idle":
+      ChangeOnIdle();
+      break;
+    case "locked":
+      ChangeOnIdle();
+      break;
+      default:
       
-          tab = tabs[0];
-          if(typeof(tab) == 'undefined') return;
-          Extension.windows.addDistinct(new Core(tab.windowId));
-          var windowHistory = Extension.windows.get(new Core(tab.windowId));
-
-          windowHistory.prepareMessage(function(result){
-            Messaging.sendMessage({
-                type: "Write",
-                message: result  + "\n"
-              });
-            windowHistory.clear();
-          });
-            windowHistory.lastTabId = tab.id;
-            windowHistory.lastTabUrl = tab.url;
-            windowHistory.lastTabBegin = new Date();
-            console.log("OnFocusChanged " + tab.url); 
-        }
-    );
-              
-	}
-}
+  }
+});
 
 /**/
-function OnCreated(window){
-  console.log("Created " + window.id);
-	Extension.windows.addDistinct(new Core(window.id));
-}
+chrome.idle.setDetectionInterval(Idle.detectionInterval);
 
-/**/
-function OnRemoved(windowId){
-  console.log("Removed " + windowId);
-  Extension.windows.del(new Core(windowId));
-}
-
-/**/
-function CheckWindowsFocus(){
-  howManyFocused = 0;
+function ChangeOnIdle(){
   chrome.windows.getAll({}, function(windows){
     
     for(i = 0; i < windows.length; i++){
-      if(windows[i].focused){
-        howManyFocused++;
-      }
-      else{
         Extension.windows.addDistinct(new Core(windows[i].id));
         var windowHistory = Extension.windows.get(new Core(windows[i].id));
         if(typeof(windowHistory) != 'undefined'){
@@ -117,23 +52,28 @@ function CheckWindowsFocus(){
               });
             }
       }
-    }
     
-    if(howManyFocused == 0){
-  		//console.log("There is no active windows");
-    }
-    else{
-     // console.log("There is: " + howManyFocused + " focused windows!");
-    }
   });
-
-  
 }
 
-/**/
-function Intervals(){
-  setInterval(CheckWindowsFocus, 4000);
+function ChangeOnActive(){
+  chrome.windows.getAll({}, function(windows){
+    
+    for(i = 0; i < windows.length; i++){
+      if(windows[i].focused){
+        
+        Extension.windows.addDistinct(new Core(windows[i].id));
+        var windowHistory = Extension.windows.get(new Core(windows[i].id));
+        if(typeof(windowHistory) != 'undefined'){
+            
+          windowHistory.clear();
+          windowHistory.lastTabId = tab.id;
+          windowHistory.lastTabUrl = tab.url;
+          windowHistory.lastTabBegin = new Date();
+        	console.log("Activated " +  tab.url);
+        }
+      }
+  }
+
+   });
 }
-
-Intervals();
-

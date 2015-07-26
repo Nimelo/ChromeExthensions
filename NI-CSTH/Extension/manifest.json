@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
 
-  "name": "NI-CSTH",
-  "description": "NI-CSTH description",
-  "version": "1.0.4",
+  "name": "NI-CSTH Extension",
+  "description": "NI-CSTH Extension.",
+  "version": "1.1.0",
 
   "browser_action": {
     "default_popup": "popup/html/popup.html"
@@ -13,23 +13,19 @@
 	"scripts":  ["assets/jquery-2.1.4.min.js",
 	            "cores/js/datastructures.js",
 	            "cores/js/messaging.js", 
-	            "cores/js/background.js", 
-	            "cores/js/idle.js"],
+	            "cores/js/idle.js",
+	            "cores/js/tabBackground.js", 
+	            "cores/js/windowBackground.js"],
 	"persistent": true
   },
   "permissions": [
     "activeTab",
 	  "tabs",
 	 "storage",
-	 "notifications"
+	 "notifications",
+	 "idle"
   ],
 
-  "options_ui": {
-    "page": "options.html",
-    "chrome_style": true,
-    "open_in_tab": true
-  },
-  
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
   
 }

@@ -49,7 +49,7 @@ function OnUpdated(tabId, changeInfo, tab)
             windowHistory.lastTabId = tab.id;
             windowHistory.lastTabUrl = tab.url;
             windowHistory.lastTabBegin = new Date();
-            console.log("OnUpdated " + tab.url); 
+            console.log("Updated tab " + tab.url); 
           });
         }
     });
@@ -87,7 +87,7 @@ function OnActivated(info)
           windowHistory.lastTabId = tab.id;
           windowHistory.lastTabUrl = tab.url;
           windowHistory.lastTabBegin = new Date();
-        	console.log("OnActivated " +  tab.url);
+        	console.log("Activated " +  tab.url);
        
     }   
     }
@@ -108,9 +108,9 @@ function OnRemoved(tabId, removeInfo){
               });
       windowHistory.clear();
     });
-    console.log("OnRemoved " + "current");          
+    console.log("Removed current tab");          
   }else{
-    console.log("OnRemoved" + "not current");
+    console.log("Removed not current tab");
   }
 
 }

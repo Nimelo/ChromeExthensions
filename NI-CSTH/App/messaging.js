@@ -11,7 +11,6 @@ Messaging.blacklistedIds = ["none"];
 
 /**/
 function OnConnectExternalHandler(port){
-  console.log(port);
   port.onMessage.addListener(function(request){
     console.log(request.type);
     switch(request.type){

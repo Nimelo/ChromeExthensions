@@ -6,8 +6,11 @@ function Socketing(serviceUrl){
   
   this.init = function(){
     var that = this;
+    try{
     this.socket = new WebSocket(this.serviceUrl);
-    
+    }catch(ex){
+      
+    }
     this.socket.onopen = function () {
           console.log('Connection Established!');
           clearInterval(this.reconnectIntervalId);
