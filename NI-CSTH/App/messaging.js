@@ -1,6 +1,6 @@
 
 
-chrome.runtime.onMessageExternal.addListener(OnMessageExternalHandler);
+chrome.runtime.onConnectExternal.addListener(OnConnectExternalHandler);
 
 /**/
 function Messaging(){
@@ -10,29 +10,14 @@ function Messaging(){
 Messaging.blacklistedIds = ["none"];
 
 /**/
-Messaging.sendMessage = function(appId, type, text){
-  chrome.
-  runtime.
-  sendMessage(appId,
-              {
-                type: type,
-                message: text
-              }, 
-              function(response) { 
-                 console.log(response);
-              }
-  );
-};
-
-/**/
-function OnMessageExternalHandler(request, sender, sendResponse){
-  if(sender.id in Messaging.blacklistedIds){
-    sendResponse({"result":"You are on black list!"});
-    return;
-  }
-  else{
+function OnConnectExternalHandler(port){
+  console.log(port);
+  port.onMessage.addListener(function(request){
     console.log(request.type);
     switch(request.type){
+      case "Echo":
+        port.postMessage({message: request.message});
+        break;
       case "Notification":
          new Notification('Notification', {body: request.message});
         break;
@@ -41,27 +26,20 @@ function OnMessageExternalHandler(request, sender, sendResponse){
         break;
       case "Write":
         FileManagment.writeData(request.message);
-        writeFile(FileManagment.getCurrentFileName(),request.message)
         //new Notification('Write', {body: ""});
         break;
         
       case "Read":
-        OnReadRequest(request, sender);
-        /*FileManagment.readData(function(result){
-          Messaging.sendMessage(sender.id, "", result);
-          //new Notification('Read', {body: result});
-          }
-        );*/
-       
+        OnReadRequest(request, port);
         break;
       default:
-        alert(request.message);
+        //alert(request.message);
     }
-    
-  }
-}
+  });
+};
 
-function OnReadRequest(request, sender){
+
+function OnReadRequest(request, port){
   switch(request.message){
     case "Year":
       
@@ -69,43 +47,28 @@ function OnReadRequest(request, sender){
       console.log("Request for yearly history!");
       break;
       
-    case "Month":
-      console.log("Request for monthly history!");
-      
-      var month = new Date().getMonth() + 1;
-      var year = new Date().getFullYear();
-      var names = DateHelper.prepareNamesMonth(year, month);
-      this.tmpResult = "";
-      names.forEach(function(name, index, array){
-        //console.log(index);
-        if(index != names.length - 1){
-          FileManagment.readData(name, function(result){ 
-            if(result != "")
-              this.tmpResult +=  result;
+    case "Day":
+      var day = request.day;
+      console.log("Request for day " + day);
+      FileManagment.readData(day, function(result){ 
+        port.postMessage({message:result, 
+                          type: "Day",
+                          day: request.day
         });
-          }
-          else{
-            FileManagment.readData(name, function(result){ 
-            if(result != "")
-              this.tmpResult += result;
-            //console.log(this.tmpResult);
-            Messaging.sendMessage(sender.id, "", this.tmpResult);
         });
-          }
-        
-      })
       
       break;
     
     case "Today": 
       console.log("Request for today's history!");
-      FileManagment.readData(FileManagment.getCurrentFileName(), function(result){       
-          Messaging.sendMessage(sender.id, "", result);
+      FileManagment.readData(FileManagment.getCurrentFileName(), function(result){ 
+          port.postMessage({message:result, 
+                          type: "Today"
         });
-      
+        });
       break;
       
     default:
-      alert(request.message);
+      //alert(request.message);
   }
 }

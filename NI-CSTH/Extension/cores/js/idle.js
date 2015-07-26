@@ -49,7 +49,10 @@ function OnFocusChanged(windowId){
 	    var tmp = Extension.windows.get(new Core(window.id));
 	    if(typeof(tmp) != 'undefined'){
 	      tmp.prepareMessage(function(result){
-	      Messaging.sendMessage("Write", result  + "\n");
+	      Messaging.sendMessage({
+                type: "Write",
+                message: result  + "\n"
+              });
 	    });
 	    }
 	    
@@ -63,7 +66,10 @@ function OnFocusChanged(windowId){
           var windowHistory = Extension.windows.get(new Core(tab.windowId));
 
           windowHistory.prepareMessage(function(result){
-            Messaging.sendMessage("Write", result  + "\n");
+            Messaging.sendMessage({
+                type: "Write",
+                message: result  + "\n"
+              });
             windowHistory.clear();
           });
             windowHistory.lastTabId = tab.id;
@@ -103,7 +109,10 @@ function CheckWindowsFocus(){
         if(typeof(windowHistory) != 'undefined'){
             
               windowHistory.prepareMessage(function(result){
-                Messaging.sendMessage("Write", result  + "\n");
+                Messaging.sendMessage({
+                type: "Write",
+                message: result  + "\n"
+              });
                 windowHistory.clear();
               });
             }

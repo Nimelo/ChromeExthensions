@@ -8,6 +8,7 @@
 		<script src="../../assets/js/modules/exporting.js"></script>
 		<script src="../../cores/js/datastructures.js"></script>
 		<script src="../../cores/js/messaging.js"></script>
+		<script src="../../popup/js/dateHelper.js"></script>
 		<script src="../../popup/js/chartsDataPreparing.js"></script>
 		<script src="../../popup/js/chartsRendering.js"></script>
 		<script src="../../popup/js/popup.js"></script>
@@ -19,12 +20,19 @@
 	    
 	    <!-- Navigation bars -->
 	    <ul class="nav nav-tabs" role="tablist">
+	      
 	      <li class="active">
 	        <a href="#dailyTab" data-toggle="tab">Daily</a>
 	      </li>
 	      
 	      <li>
-					<a href="#monthlyTab" data-toggle="tab">Monthly</a>
+	        <a href="#monthlyTab" data-toggle="tab">Monthly</a>
+	      </li>
+	      
+	      <li>
+					<p class="navbar-btn">
+                    <a href="#refresh" id="#refresh" class="btn btn-default">Refresh!</a>
+          </p>
 				</li>
 	    </ul>
 	    
@@ -39,7 +47,7 @@
 	       
 	       <!-- Monthly -->
 	       <div class="tab-pane" id="monthlyTab">
-	         <div id="monthlyChart" style="min-width: 600px; height: 400px; margin: 0 auto"></div>
+	         <div id="monthlyChart" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
 	       </div>
 	     </div>
 		  

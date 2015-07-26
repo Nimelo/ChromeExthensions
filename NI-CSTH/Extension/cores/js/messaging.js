@@ -1,8 +1,3 @@
-
-/**/
-chrome.runtime.onMessageExternal.addListener(OnMessageExternalHandler);
-
-
 /**/
 function Messaging(){
 }
@@ -16,50 +11,36 @@ var appId = "ioahanpfejhfkddophnidknicmaohfif";//"pfocmjaloogdegfccbhohfjffioaja
 Messaging.lastResponse = "";
 
 /**/
-Messaging.sendMessage = function(type, text){
-  chrome.
-  runtime.
-  sendMessage(appId,
-              {
-                type: type,
-                message: text
-              }, 
-              function(response) { 
-                 console.log(response);
-              }
-  );
+Messaging.sendMessage = function(obj){
+  var port = chrome.runtime.connect(appId);
+  //chrome.onMessage.addListener(listener);
+  
+  port.postMessage(obj);
+  //port.disconnect();
 };
 
-/**/
-Messaging.sendMessageWaitRespond = function(type, text, callback){
-  chrome.runtime.onMessageExternal.removeListener(OnMessageExternalHandler);
-  chrome.runtime.onMessageExternal.addListener(function(request, sender, sendResponse){
-    if(sender.id in Messaging.blacklistedIds){
-    sendResponse({"result":"You are on black list!"});
-    return;
-  }
-  else{
-      callback(request.message);
-      Messaging.lastResponse = request.message;
-    }
-  });
+Messaging.sendMessageWaitRespond = function(obj, listener){
+  var port = chrome.runtime.connect(appId);
+  port.onMessage.addListener(listener);
   
-  Messaging.sendMessage(type, text);
-  
-  chrome.runtime.onMessageExternal.addListener(OnMessageExternalHandler);
+  port.postMessage(obj);
+  //port.disconnect();
 }
 
 /**/
-function OnMessageExternalHandler(request, sender, sendResponse){
-  if(sender.id in Messaging.blacklistedIds){
-    sendResponse({"result":"You are on black list!"});
-    return;
+function OnMessageExternalHandler(request){
+  switch(request.type){
+    case "Year":
+      break;
+    case "Day":
+      var day = request.day;
+      break;
+    case "Today":
+      var result = request.message;
+      
+      break;
+    default:
+      
   }
-  else{
-      Messaging.lastResponse = request.message;
-        //alert(request.message);
-    }
-    
-  
 }
 

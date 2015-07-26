@@ -19,35 +19,50 @@ $(function () {
       var target = $(e.target).attr("href"); // activated tab
       switch(target){
         case "#dailyTab":
-          Messaging.sendMessageWaitRespond("Read", "Today", function(response){
+          Messaging.sendMessageWaitRespond({
+                type: "Read",
+                message: "Today"
+              }, function(response){
             ChartsDataPreparing.prepareForDaily(response,  ChartsRendering.renderDaily);
           });
           break;
         case "#monthlyTab":
-          Messaging.sendMessageWaitRespond("Read", "Month", function(response){
-            ChartsDataPreparing.prepareForMonthly(response, ChartsRendering.renderMonthly);
-          });
+          ChartsDataPreparing.prepareForMonthly(ChartsRendering.renderMonthly);
+
           break;
         default:
-          alert(target);
+          //alert(target);
           break;
       }
     });
     
     $(document).ready(function () {
 
-      Messaging.sendMessageWaitRespond("Read", "Today", function(response){
+      Messaging.sendMessageWaitRespond({
+                type: "Read",
+                message: "Today"
+              }, function(response){
       //console.log(response);
-        ChartsDataPreparing.prepareForDaily(response,  ChartsRendering.renderDaily);
+        ChartsDataPreparing.prepareForDaily(response.message,  ChartsRendering.renderDaily);
       });
         
+      var refresh = document.getElementById('#refresh');
+        // onClick's logic below:
+        refresh.addEventListener('click', function() {
+             Messaging.sendMessageWaitRespond({
+                type: "Read",
+                message: "Today"
+              }, function(response){
+        //console.log(response);
+          ChartsDataPreparing.prepareForDaily(response.message,  ChartsRendering.renderDaily);
+          
+      });
+      ChartsRendering.renderMonthly(MonthlyChartSeries.series);
+        });
     });
     
     
 });
-
-
-
 
 
 

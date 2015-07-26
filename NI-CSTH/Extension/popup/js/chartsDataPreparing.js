@@ -33,84 +33,99 @@ ChartsDataPreparing.prepareForDaily = function(text, callback){
 };
 
 /**/
-ChartsDataPreparing.prepareForMonthly = function(text, callback){
-  var regexForFile = /!.*\.dat\n/;
-  var regexForFileGI = /!.*\.dat/gi;
-  var splittedStrings = text.split(regexForFile);
-  var filesNames = text.match(regexForFileGI);
-  splittedStrings = splittedStrings.slice(1);
-  var associationArray = [];
-  if(filesNames.length == splittedStrings.length){
-    
-    for(i = 1; i <= numberOfDays(filesNames[0].replace("!","").replace(".dat","").split("-")[0], filesNames[0].replace("!","").replace(".dat","").split("-")[1]); i++){
-      associationArray.push("");
-    }
-    
-    for(i = 0; i < splittedStrings.length; i++){
-      var day = Number(filesNames[i].replace("!","").replace(".dat","").split("-")[2]);
-      associationArray[day - 1] = splittedStrings[i];
-    }
-    
-    var series1 = [];
-    var series2 = [];
-    var series3 = [];
-    
-    for(i = 0; i < associationArray.length; i++){
-      var histEntry = HistoryEntry.fromString("\n" + associationArray[i]);
+ChartsDataPreparing.prepareForMonthly = function(callback){
+ 
       
-      histEntry.items.sort(function(a,b){
-        return Number(b.counter) - Number(a.counter);  
+       MonthlyChartSeries.namesOfCurrentMonth.forEach(function(el){
+         
+       
+       Messaging.sendMessageWaitRespond({
+                type: "Read",
+                message: "Day",
+                day: el
+              }, function(response){
+                
+        var histEntry = HistoryEntry.fromString(response.message);
+        
+        var currentDay = Number(response.day.replace("!","").replace(".dat","").split("-")[2]);
+        console.log(response.day);
+        
+        histEntry.items.sort(function(a,b){
+          return Number(b.counter) - Number(a.counter);  
+        });
+        
+        var el1 = histEntry.elementAt(0);
+        if(typeof(el1) != 'undefined'){
+          //console.log("new el1" + i)
+          MonthlyChartSeries.series1[currentDay - 1] = {name: el1.domain, y: Math.floor(el1.counter / 60)};
+        }  
+        
+        var el2 = histEntry.elementAt(1);
+        if(typeof(el2) != 'undefined'){
+           //console.log("new el2" + i)
+          MonthlyChartSeries.series2[currentDay - 1] = {name: el2.domain, y: Math.floor(el2.counter / 60)};
+        }  
+        
+        var el3 = histEntry.elementAt(2);
+        if(typeof(el3) != 'undefined'){
+          // console.log("new el3" + i)
+          MonthlyChartSeries.series3[currentDay - 1] = {name: el3.domain, y: Math.floor(el3.counter / 60)};
+        }
+        
+        callback(MonthlyChartSeries.series);
+              
       });
-      
-      series1.push({name: "Undefined", y: 0});
-      series2.push({name: "Undefined", y: 0});
-      series3.push({name: "Undefined", y: 0});
-      
-      var el1 = histEntry.elementAt(0);
-      if(typeof(el1) != 'undefined'){
-        //console.log("new el1" + i)
-        series1[i] = {name: el1.domain, y: Math.floor(el1.counter / 60)};
-      }  
-      
-      var el2 = histEntry.elementAt(1);
-      if(typeof(el2) != 'undefined'){
-         //console.log("new el2" + i)
-        series2[i] = {name: el2.domain, y: Math.floor(el2.counter / 60)};
-      }  
-      
-      var el3 = histEntry.elementAt(2);
-      if(typeof(el3) != 'undefined'){
-        // console.log("new el3" + i)
-        series3[i] = {name: el3.domain, y: Math.floor(el3.counter / 60)};
-      }
-      
+       });
+};
+
+function MonthlyChartSeries(){
+    
+}
+MonthlyChartSeries.isNext = true;
+MonthlyChartSeries.series1 = [];
+MonthlyChartSeries.series2 = [];
+MonthlyChartSeries.series3 = [];
+MonthlyChartSeries.series = [];
+MonthlyChartSeries.namesOfCurrentMonth = [];
+MonthlyChartSeries.amountOfDays = 0;
+MonthlyChartSeries.index = 0;
+MonthlyChartSeries.getNextIndex = function(){
+  /*if(MonthlyChartSeries.amountOfDays > MonthlyChartSeries.index){
+    return MonthlyChartSeries.index++;
+  }else{
+    MonthlyChartSeries.index = 0;
+    return MonthlyChartSeries.index++;
+  }*/
+  MonthlyChartSeries.index += 1;
+  MonthlyChartSeries.isNext = true;
+}
+
+function Init(){
+    MonthlyChartSeries.namesOfCurrentMonth = DateHelper.prepareNamesMonth(new Date().getFullYear(), new Date().getMonth() + 1);
+    MonthlyChartSeries.amountOfDays = MonthlyChartSeries.namesOfCurrentMonth.length;
+    
+    
+    for(i = 0; i < MonthlyChartSeries.amountOfDays; i++){
+        MonthlyChartSeries.series1.push({name: "Undefined", y: 0});
+        MonthlyChartSeries.series2.push({name: "Undefined", y: 0});
+        MonthlyChartSeries.series3.push({name: "Undefined", y: 0});
     }
-    var series = [];
-    series.push({name: "Top 1",
-                data: series1,
+    
+    MonthlyChartSeries.series.push({name: "Top 1",
+                data: MonthlyChartSeries.series1,
                 color: '#f45b5b'
     });
     
-    series.push({name: "Top 2",
-                data: series2,
+    MonthlyChartSeries.series.push({name: "Top 2",
+                data: MonthlyChartSeries.series2,
                 color:  '#90ed7d'
     });
     
-    series.push({name: "Top 3",
-                data: series3,
+    MonthlyChartSeries.series.push({name: "Top 3",
+                data: MonthlyChartSeries.series3,
                 color:  '#7cb5ec'
     });
     
-    callback(series);
-  }
-  else
-    console.log("error");
-  
-  
-};
+}
 
-/**/
-function numberOfDays(year, month) {
-  var d = new Date(year, month, 0);
-  return d.getDate();
-};
+Init();

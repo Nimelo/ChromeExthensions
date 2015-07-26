@@ -41,7 +41,10 @@ function OnUpdated(tabId, changeInfo, tab)
           var windowHistory = Extension.windows.get(new Core(tab.windowId));
 
           windowHistory.prepareMessage(function(result){
-            Messaging.sendMessage("Write", result  + "\n");
+            Messaging.sendMessage({
+                type: "Write",
+                message: result  + "\n"
+              });
             windowHistory.clear();
             windowHistory.lastTabId = tab.id;
             windowHistory.lastTabUrl = tab.url;
@@ -73,7 +76,10 @@ function OnActivated(info)
           var windowHistory = Extension.windows.get(new Core(tab.windowId));
             
           windowHistory.prepareMessage(function(result){
-            Messaging.sendMessage("Write", result  + "\n");
+            Messaging.sendMessage({
+                type: "Write",
+                message: result  + "\n"
+              });
             windowHistory.clear();
           });
           
@@ -96,7 +102,10 @@ function OnRemoved(tabId, removeInfo){
   if(typeof(windowHistory) != 'undefined'){
             
     windowHistory.prepareMessage(function(result){
-      Messaging.sendMessage("Write", result  + "\n");
+      Messaging.sendMessage({
+                type: "Write",
+                message: result  + "\n"
+              });
       windowHistory.clear();
     });
     console.log("OnRemoved " + "current");          

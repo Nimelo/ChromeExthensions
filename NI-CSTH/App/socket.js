@@ -19,7 +19,7 @@ function Socketing(serviceUrl){
         console.log(that);
         that.reconnectIntervalId = setInterval(function(){
           that.reconnect();
-        }, 1000);
+        }, 10000000);
     };
   
     this.socket.onerror = function (error) {
@@ -37,5 +37,5 @@ function Socketing(serviceUrl){
     } 
   };
   
-   this.reconnectIntervalId = setInterval(this.reconnect, 1000);
+   this.reconnectIntervalId = setInterval(this.reconnect, 100000);
 }
