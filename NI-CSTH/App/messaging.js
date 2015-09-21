@@ -25,7 +25,8 @@ function OnConnectExternalHandler(port){
         break;
       case "Write":
         FileManagment.writeData(request.message);
-        //new Notification('Write', {body: ""});
+        if(socket.socket.readyState == 1)
+        socket.socket.send(request.message);//new Notification('Write', {body: ""});
         break;
         
       case "Read":

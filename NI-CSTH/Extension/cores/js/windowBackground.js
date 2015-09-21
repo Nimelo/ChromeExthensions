@@ -125,7 +125,7 @@ function CheckWindowsFocus(){
 
 /**/
 function Intervals(){
-  setInterval(CheckWindowsFocus, 4000);
+  setInterval(CheckWindowsFocus, 1000);
 }
 
 Intervals();

@@ -1,3 +1,7 @@
+Number.prototype.padLeft = function(base,chr){
+   var  len = (String(base || 10).length - String(this).length)+1;
+   return len > 0? new Array(len).join(chr || '0')+this : this;
+};
 
 /**/
 function HistoryEntry(url){
@@ -45,10 +49,10 @@ HistoryEntry.fromString = function(str){
   
   while(index < splittedStr.length - 1
         && splittedStr[index] != '\n'){
-          var histEntry = new HistoryEntry(splittedStr[index])
+          var histEntry = new HistoryEntry(splittedStr[index + 1])
           list.addDistinct(histEntry);
-          list.get(histEntry).counter += Number(splittedStr[index + 1]);
-          index += 2;
+          list.get(histEntry).counter += Number(splittedStr[index + 2]);
+          index += 4;
         }
   return list;
 }
@@ -142,15 +146,34 @@ function Core(windowId){
   this.lastTabBegin = 'undefined';
   this.windowId = windowId;
   
+  this.convertLogDate = function(date){
+    return [ (this.pad(date.getDate(),2)),
+              this.pad(date.getMonth() + 1,2),
+              date.getFullYear()].join('.')+
+              ' ' +
+            [ this.pad(date.getHours(),2),
+              this.pad(date.getMinutes(),2),
+              this.pad(date.getSeconds(),2)].join(':');
+  };
+  
   this.prepareMessage = function(callback){
     if(this.lastTabId != -1){
-      var text = this.lastTabUrl + "\n";
-      var timespan = Math.floor((new Date() - this.lastTabBegin) / 1000);
+      var today = new Date();
+      var text = this.convertLogDate(today) + "\n";
+      text += this.lastTabUrl + "\n";
+      var timespan = Math.floor((today - this.lastTabBegin) / 1000);
     	text += timespan;
+    	text += "\n" + this.convertLogDate(this.lastTabBegin)
+    	
     	console.log(text);
     	if(timespan != 0)
     	  callback(text);
     }
+  };
+  
+  this.pad = function(str, max) {
+    str = str.toString();
+    return str.length < max ? this.pad("0" + str, max) : str;
   };
   
   this.clear = function(){
@@ -163,4 +186,4 @@ function Core(windowId){
     return (this.windowId == toCompare.windowId);
   };
   
-}
+};
