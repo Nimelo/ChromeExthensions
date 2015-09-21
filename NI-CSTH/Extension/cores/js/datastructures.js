@@ -159,11 +159,11 @@ function Core(windowId){
   this.prepareMessage = function(callback){
     if(this.lastTabId != -1){
       var today = new Date();
-      var text = this.convertLogDate(today) + "\n";
+      var text = this.convertLogDate(this.lastTabBegin) + "\n";
       text += this.lastTabUrl + "\n";
       var timespan = Math.floor((today - this.lastTabBegin) / 1000);
     	text += timespan;
-    	text += "\n" + this.convertLogDate(this.lastTabBegin)
+    	text += "\n" + this.convertLogDate(today)
     	
     	console.log(text);
     	if(timespan != 0)
