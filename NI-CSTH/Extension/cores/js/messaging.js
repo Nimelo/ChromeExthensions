@@ -1,6 +1,10 @@
 /**/
 function Messaging(){
 }
+var serviceUrl = 'ws://localhost:4649/FileHistory';
+
+var socket = new Socketing(serviceUrl);
+socket.init();
 
 /**/
 Messaging.blacklistedIds = ["none"];
@@ -12,10 +16,14 @@ Messaging.lastResponse = "";
 
 /**/
 Messaging.sendMessage = function(obj){
-  var port = chrome.runtime.connect(appId);
+  
+  if(socket.socket.readyState == 1){
+    socket.socket.send(obj.message);
+  }
+ // var port = chrome.runtime.connect(appId);
   //chrome.onMessage.addListener(listener);
   
-  port.postMessage(obj);
+  //port.postMessage(obj);
   //port.disconnect();
 };
 

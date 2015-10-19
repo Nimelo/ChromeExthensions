@@ -14,6 +14,7 @@
   
   "background":{
 	"scripts":  ["assets/jquery-2.1.4.min.js",
+	            "cores/js/socket.js",
 	            "cores/js/datastructures.js",
 	            "cores/js/messaging.js", 
 	            "cores/js/idle.js",
