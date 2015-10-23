@@ -8,7 +8,9 @@ function Socketing(serviceUrl){
     var that = this;
     try{
     this.socket = new WebSocket(this.serviceUrl);
-   
+    }catch(ex){
+      
+    }
     this.socket.onopen = function () {
           console.log('Connection Established!');
           clearInterval(this.reconnectIntervalId);
@@ -20,7 +22,7 @@ function Socketing(serviceUrl){
         console.log(that);
         that.reconnectIntervalId = setInterval(function(){
           that.reconnect();
-        }, 10000);
+        }, 10000000);
     };
   
     this.socket.onerror = function (error) {
@@ -28,18 +30,8 @@ function Socketing(serviceUrl){
     };
   
     this.socket.onmessage = function (e) {
-      if(e.data.indexOf("READ_") > -1){
-        var fileName = e.data.replace("READ_", "");
-        FileManagment.readData(fileName, function(data){
-          this.socket.socket.send(data);
-          console.log(data);
-        });
-      }
        console.log(e);
     };
-    }catch(ex){
-      
-    }
   };
   
   this.reconnect = function(){

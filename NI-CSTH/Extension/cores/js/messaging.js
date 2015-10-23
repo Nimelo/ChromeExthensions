@@ -9,7 +9,7 @@ socket.init();
 /**/
 Messaging.blacklistedIds = ["none"];
 
-var appId = "ioahanpfejhfkddophnidknicmaohfif";//"pfocmjaloogdegfccbhohfjffioajaeo";//"ioahanpfejhfkddophnidknicmaohfif";
+var appId = "ioahanpfejhfkddophnidknicmaohfif";//"pfocmjaloogdegfccbhohfjffioajaeo";
 
 /**/
 Messaging.lastResponse = "";
