@@ -28,9 +28,9 @@ function OnUpdated(tabId, changeInfo, tab)
 	
   chrome.tabs.get(tabId, function(tab){
         if (chrome.runtime.lastError) {
-        //console.log(chrome.runtime.lastError.message);
+        console.log(chrome.runtime.lastError.message);
     } else {
-     
+     console.log("OnUpdated")
     //Checking if update is fired on active tab!
     chrome.tabs.query({active:true}, function(tabs){
       
@@ -70,7 +70,7 @@ function OnActivated(info)
     	      console.log("OnActivated Tab is undefined!")
     	      return;
     	    }
-    	    
+    	    console.log("OnActivated")
     	    Extension.windows.addDistinct(new Core(tab.windowId));
     	    console.log(tab.windowId);
           var windowHistory = Extension.windows.get(new Core(tab.windowId));
@@ -83,7 +83,7 @@ function OnActivated(info)
             windowHistory.clear();
           });
           
-        
+          
           windowHistory.lastTabId = tab.id;
           windowHistory.lastTabUrl = tab.url;
           windowHistory.lastTabBegin = new Date();

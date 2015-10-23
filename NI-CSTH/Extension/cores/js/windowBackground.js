@@ -31,7 +31,7 @@ function OnFocusChanged(windowId){
 	
 	if(windowId == chrome.windows.WINDOW_ID_NONE)
 	{
-		//console.log("WINDOW_ID_NONE!");
+		console.log("WINDOW_ID_NONE!");
     CheckWindowsFocus();
   	//Core.prepareMessage();
     //Core.clear();
@@ -39,7 +39,7 @@ function OnFocusChanged(windowId){
 	}
 	else if(windowId == chrome.windows.WINDOW_ID_CURRENT)
 	{
-		//console.log("WINDOW_ID_CURRENT!");
+		console.log("WINDOW_ID_CURRENT!");
 	}
 	else
 	{
@@ -97,30 +97,56 @@ function OnRemoved(windowId){
 /**/
 function CheckWindowsFocus(){
   howManyFocused = 0;
+  focuesedId = -1;
   chrome.windows.getAll({}, function(windows){
     
     for(i = 0; i < windows.length; i++){
       if(windows[i].focused){
         howManyFocused++;
-      }
-      else{
-        Extension.windows.addDistinct(new Core(windows[i].id));
+        focuesedId = windows[i].id;
+      }}
+      
+     if(howManyFocused > 0){
+
+        chrome.tabs.query({active:true, windowId:focuesedId}, function(tabs){
+          
+              tab = tabs[0];
+              if(typeof(tab) != 'undefined' && Extension.windows.get(new Core(tab.windowId)).lastTabId == -1){
+                 //Extension.windows.del(new Core(tab.windowId));
+                 var windowHistory = Extension.windows.get(new Core(tab.windowId));
+                  windowHistory.lastTabId = tab.id;
+                           windowHistory.lastTabUrl = tab.url;
+                            windowHistory.lastTabBegin = new Date();
+               Extension.windows.addDistinct(new Core(tab.windowId));
+                          
+               console.log("!!!!!Window focus changed on " + tab.url); 
+              }
+
+            });
+
+      }else{
+        for(i = 0; i < windows.length; i++){
         var windowHistory = Extension.windows.get(new Core(windows[i].id));
+       
         if(typeof(windowHistory) != 'undefined'){
-            
+            // console.log(windowHistory)
               windowHistory.prepareMessage(function(result){
                 Messaging.sendMessage({
                 type: "Write",
                 message: result  + "\n"
               });
+                console.log('beforeclear')
                 windowHistory.clear();
               });
             }
+       //Extension.windows.del(new Core(windows[i].id))
+            //Extension.windows = new List();
       }
-    }
-  });
-
+      }
   
+    
+  });
+ 
 }
 
 /**/

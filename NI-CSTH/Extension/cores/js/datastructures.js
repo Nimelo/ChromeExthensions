@@ -87,8 +87,6 @@ function List(){
 			this.items.every(function(element, index, array){
 				exst = element.compare(item) ? true : false;
 						if(exst == true) 
-							return false;
-						else
 							return true;
 				}
 			);
