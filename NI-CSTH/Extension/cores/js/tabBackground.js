@@ -24,36 +24,15 @@ function OnCreated(tab){
 /**/
 function OnUpdated(tabId, changeInfo, tab)
 {
-	
-	
-  chrome.tabs.get(tabId, function(tab){
-        if (chrome.runtime.lastError) {
-        console.log(chrome.runtime.lastError.message);
-    } else {
-     console.log("OnUpdated")
-    //Checking if update is fired on active tab!
-    chrome.tabs.query({active:true}, function(tabs){
-      
-        if(tabs.some(function(el, index, array){
-          return el.id == tab.id;
-        })){
-          Extension.windows.addDistinct(new Core(tab.windowId));
-          var windowHistory = Extension.windows.get(new Core(tab.windowId));
-
-          windowHistory.prepareMessage(function(result){
-            Messaging.sendMessage({
-                type: "Write",
-                message: result  + "\n"
-              });
-            windowHistory.clear();
-            windowHistory.lastTabId = tab.id;
-            windowHistory.lastTabUrl = tab.url;
-            windowHistory.lastTabBegin = new Date();
-            console.log("Updated tab " + tab.url); 
-          });
+  chrome.windows.getCurrent({populate:true}, function(window){
+    chrome.tabs.query({active:true, windowId:window.id}, function(tabs){
+          vtab = tabs[0];
+          if(typeof(tab) == 'undefined') return;
+          if(tab.id == tabId){
+            Perform();
+          }
         }
-    });
-  }
+    );
   });
 }
 
@@ -61,57 +40,14 @@ function OnUpdated(tabId, changeInfo, tab)
 function OnActivated(info)
 {
 
-  chrome.tabs.get(info.tabId, function(tab){
-    	if (chrome.runtime.lastError) {
-        console.log(chrome.runtime.lastError.message);
-    } else {
-        // Tab exists
-    	    if(typeof(tab) == 'undefined') {
-    	      console.log("OnActivated Tab is undefined!")
-    	      return;
-    	    }
-    	    console.log("OnActivated")
-    	    Extension.windows.addDistinct(new Core(tab.windowId));
-    	    console.log(tab.windowId);
-          var windowHistory = Extension.windows.get(new Core(tab.windowId));
-            
-          windowHistory.prepareMessage(function(result){
-            Messaging.sendMessage({
-                type: "Write",
-                message: result  + "\n"
-              });
-            windowHistory.clear();
-          });
-          
-          
-          windowHistory.lastTabId = tab.id;
-          windowHistory.lastTabUrl = tab.url;
-          windowHistory.lastTabBegin = new Date();
-        	console.log("Activated " +  tab.url);
-       
-    }   
-    }
-  );
+ Perform();
 	
 }
 
 /**/
 function OnRemoved(tabId, removeInfo){
 	
-  var windowHistory = Extension.windows.get(removeInfo.windowId);
-  if(typeof(windowHistory) != 'undefined'){
-            
-    windowHistory.prepareMessage(function(result){
-      Messaging.sendMessage({
-                type: "Write",
-                message: result  + "\n"
-              });
-      windowHistory.clear();
-    });
-    console.log("Removed current tab");          
-  }else{
-    console.log("Removed not current tab");
-  }
+  Perform();
 
 }
 
