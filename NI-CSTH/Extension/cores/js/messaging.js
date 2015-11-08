@@ -1,15 +1,15 @@
 /**/
 function Messaging(){
 }
-var serviceUrl = 'ws://localhost:4649/FileHistory';
+//var serviceUrl = 'ws://localhost:4649/FileHistory';
 
-var socket = new Socketing(serviceUrl);
-socket.init();
+//var socket = new Socketing(serviceUrl);
+//socket.init();
 
 /**/
 Messaging.blacklistedIds = ["none"];
 
-var appId = "ioahanpfejhfkddophnidknicmaohfif";//"pfocmjaloogdegfccbhohfjffioajaeo";//"ioahanpfejhfkddophnidknicmaohfif";
+var appId = "pfocmjaloogdegfccbhohfjffioajaeo";//"ioahanpfejhfkddophnidknicmaohfif";
 
 /**/
 Messaging.lastResponse = "";
@@ -17,14 +17,12 @@ Messaging.lastResponse = "";
 /**/
 Messaging.sendMessage = function(obj){
   
-  if(socket.socket.readyState == 1){
+ /* if(socket.socket.readyState == 1){
     socket.socket.send(obj.message);
-  }
- // var port = chrome.runtime.connect(appId);
-  //chrome.onMessage.addListener(listener);
-  
-  //port.postMessage(obj);
-  //port.disconnect();
+  }*/
+  var port = chrome.runtime.connect(appId);
+  port.postMessage(obj);
+  port.disconnect();
 };
 
 Messaging.sendMessageWaitRespond = function(obj, listener){
