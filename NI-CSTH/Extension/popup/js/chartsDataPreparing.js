@@ -10,9 +10,18 @@ ChartsDataPreparing.prepareForDaily = function(text, callback){
   var data = [];
   
   history.items.forEach(function(el){
-    data.push({name: el.domain,
+    if(data.some(element => element.name == el.domain)){
+      data.forEach(function(elem, index, array){
+        if(elem.name == el.domain){
+          elem.y += Number(el.counter)
+        }
+      })
+    }else{
+      data.push({name: el.domain,
               y: Number(el.counter)}
     );
+    }
+    
   });
   
   data.sort(function(a,b){
